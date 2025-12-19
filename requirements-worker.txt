@@ -1,0 +1,15 @@
+# Dependências mínimas para rodar o worker
+# Mantém o foco em inferência + Redis.
+
+# (Torch já vem no container base pytorch/pytorch, mas mantemos pin para consistência)
+torch==2.8.0
+transformers>=4.38.2
+timm>=0.9.16
+accelerate
+sentencepiece
+attrdict
+einops
+
+redis>=5.0.0
+pillow>=10.0.0
+numpy>=1.24.0

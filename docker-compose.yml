@@ -1,0 +1,69 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: janus-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+
+  janus-pro-1b-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: janus-pro-1b-worker
+    depends_on:
+      - redis
+    environment:
+      HF_HUB_ENABLE_HF_TRANSFER: "0"
+      MODEL_NAME: ${JANUS_PRO_1B_MODEL_NAME:-janus-pro-1b}
+      MODEL_PATH: ${JANUS_PRO_1B_MODEL_PATH:-deepseek-ai/Janus-Pro-1B}
+      REDIS_URL: "redis://redis:6379/0"
+      OUTPUT_DIR: "/data/outputs/janus-pro-1b"
+
+      DEVICE: ${DEVICE:-cuda:0}
+      DTYPE: ${DTYPE:-bf16}
+      ATTN_IMPL: ${ATTN_IMPL:-eager}
+
+      T2I_PARALLEL_SIZE: "1"
+      T2I_GUIDANCE: "5"
+      T2I_TEMPERATURE: "1"
+      T2I_WIDTH: "384"
+      T2I_HEIGHT: "384"
+      VLM_MAX_NEW_TOKENS: "512"
+    volumes:
+      - hf_cache:/data/hf
+      - ./outputs:/data/outputs
+    gpus: all
+
+  janus-3b-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: janus-3b-worker
+    depends_on:
+      - redis
+    environment:
+      HF_HUB_ENABLE_HF_TRANSFER: "0"
+      MODEL_NAME: ${JANUS_3B_MODEL_NAME:-janus-1.3b}
+      MODEL_PATH: ${JANUS_3B_MODEL_PATH:-deepseek-ai/Janus-1.3B}
+      REDIS_URL: "redis://redis:6379/0"
+      OUTPUT_DIR: "/data/outputs/janus-1.3b"
+
+      DEVICE: ${DEVICE:-cuda:0}
+      DTYPE: ${DTYPE:-bf16}
+      ATTN_IMPL: ${ATTN_IMPL:-eager}
+
+      T2I_PARALLEL_SIZE: "1"
+      T2I_GUIDANCE: "5"
+      T2I_TEMPERATURE: "1"
+      T2I_WIDTH: "384"
+      T2I_HEIGHT: "384"
+      VLM_MAX_NEW_TOKENS: "512"
+    volumes:
+      - hf_cache:/data/hf
+      - ./outputs:/data/outputs
+    gpus: all
+
+volumes:
+  redis_data:
+  hf_cache:
