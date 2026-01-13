@@ -1,0 +1,3 @@
+[submodule "models/switti"]
+	path = models/switti
+	url = https://github.com/yandex-research/switti.git
