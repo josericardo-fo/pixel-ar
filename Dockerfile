@@ -1,6 +1,3 @@
-# Container dedicado do worker Janus (sem API HTTP)
-# Observação: para usar GPU, rode com NVIDIA Container Toolkit (docker compose + runtime nvidia).
-
 FROM pytorch/pytorch:2.8.0-cuda12.6-cudnn9-runtime
 
 WORKDIR /app
