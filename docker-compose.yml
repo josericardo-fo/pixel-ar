@@ -64,35 +64,27 @@ services:
       - ./outputs:/data/outputs
     gpus: all
 
-
   switti-worker:
     build:
-      context: .                          
+      context: .
       dockerfile: workers/switti/Dockerfile
     container_name: switti-worker
     depends_on:
       - redis
     environment:
       HF_HOME: "/data/hf"
-   
+
       MODEL_PATH: "yresearch/Switti-1024"
-      
+
       REDIS_URL: "redis://redis:6379/0"
       QUEUE_NAME: "switti_queue"
       OUTPUT_DIR: "/data/outputs/switti"
       DEVICE: "cuda"
-      DTYPE: "bf16" 
+      DTYPE: "bf16"
     volumes:
       - hf_cache:/data/hf
       - ./outputs/switti:/data/outputs/switti
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-
+    gpus: all
 
 volumes:
   redis_data:
